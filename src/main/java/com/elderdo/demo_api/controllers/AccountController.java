@@ -37,7 +37,7 @@ public class AccountController extends BaseApiController {
         // Check if user already exists in SQLite table
         // We can check manually or add a custom query lookup later
         boolean userExists = userRepository.findAll().stream()
-                .anyMatch(u -> u.getUserName().toLowerCase().equals(normalizedUsername));
+                .anyMatch(u -> u.getDisplayName().toLowerCase().equals(normalizedUsername));
 
         if (userExists) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is taken");
@@ -53,7 +53,7 @@ public class AccountController extends BaseApiController {
 
         AppUser user = new AppUser();
         user.setId(UUID.randomUUID().toString()); // Generate a clean string-based unique ID
-        user.setUserName(registerDto.getUsername());
+        user.setDisplayName(registerDto.getUsername());
         user.setPasswordHash(hash);
         user.setPasswordSalt(salt);
 
@@ -67,7 +67,7 @@ public class AccountController extends BaseApiController {
 
         // Locate user in your local repository stream
         Optional<AppUser> userOpt = userRepository.findAll().stream()
-                .filter(u -> u.getUserName().toLowerCase().equals(normalizedUsername))
+                .filter(u -> u.getDisplayName().toLowerCase().equals(normalizedUsername))
                 .findFirst();
 
         if (userOpt.isEmpty()) {
